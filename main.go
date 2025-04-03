@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"gormlibrary/cmd/tbox"
+	"github.com/gollerxiong/gbox/cmd/tbox"
 	"log"
 	"strings"
 )
