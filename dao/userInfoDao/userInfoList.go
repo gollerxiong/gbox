@@ -1,8 +1,8 @@
 package userInfoDao
 
 import (
-	"codeup.aliyun.com/gmax/components"
-	"codeup.aliyun.com/gmax/models"
+	"github.com/gollerxiong/gbox/components"
+	"github.com/gollerxiong/gbox/models"
 	"strings"
 )
 

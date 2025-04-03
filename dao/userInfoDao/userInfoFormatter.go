@@ -1,7 +1,7 @@
 package userInfoDao
 
 import (
-	"codeup.aliyun.com/gmax/components"
+	"github.com/gollerxiong/gbox/components"
 )
 
 type UserInfoFormatter struct {

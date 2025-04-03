@@ -1,7 +1,7 @@
 package components
 
 import (
-	"codeup.aliyun.com/6791e842556e6cdab53706c5/gmax/components/interfaces"
+	"github.com/gollerxiong/gbox/components/interfaces"
 	"strings"
 )
 

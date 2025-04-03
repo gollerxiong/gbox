@@ -1,4 +1,4 @@
-module codeup.aliyun.com/6791e842556e6cdab53706c5/gmax
+module github.com/gollerxiong/gbox
 
 go 1.23.2
 
