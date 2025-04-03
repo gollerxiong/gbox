@@ -1,4 +1,4 @@
-mbox -d=./app/models -dsn="goller_admin:123456@tcp(127.0.0.1:3306)/app_api?charset=utf8mb4" -j=true -lp=./app/library/User -t=user_first -pj=appbackend
+gbox -d=./app/models -dsn="goller_admin:123456@tcp(127.0.0.1:3306)/app_api?charset=utf8mb4" -j=true -lp=./app/library/User -t=user_first -pj=appbackend
 
 gmax
 介绍
@@ -6,15 +6,36 @@ gmax是一个从mysql表中生成go的模型结构体的工具，同时，它自
 
 软件架构
 软件架构说明
-
+-d=./app/models -dsn="goller_admin:123456@tcp(127.0.0.1:3306)/app_api?charset=utf8mb4" -j=true -lp=./app/library/Dao -t=user_info -p=appbackend
 安装教程
-xxxx
-xxxx
-xxxx
+1. 先下载
+    go get github.com/gollerxiong/gbox
+
+2. 安装可执行文件 
+   go install github.com/gollerxiong/gbox@latest
+
+   验证是否安装成功：
+   which gbox
+   如果出现 gbox命令路径则表示安装成功
+
+3. 执行命令生成指定表的脚手架
+   3.1 假如你的代码仓库的包名：appbackend (go.mod里面声明的)
+   3.2 假如你想将表生成的文件放到你当前目录的：./app/library
+   3.3 假如你想把dao层目录放在当前目录的：./app/dao
+   3.4 假如你的db链接如右所示：goller_admin:123456@tcp(127.0.0.1:3306)/app_api?charset=utf8mb4
+
+4. 执行命令
+   gbox -d=./app/models -dsn="goller_admin:123456@tcp(127.0.0.1:3306)/app_api?charset=utf8mb4" -j=true -lp=./app/library/Dao -t=user_info -p=appbackend
+
 使用说明
-xxxx
-xxxx
-xxxx
+-d: 指定模型目录生成路径
+-dsn: 数据库连接信息
+-j: 生成的表是否包含json tag
+-lp: dao文件生成目录
+-t: 表名
+-p: 个人项目的包名
+
+
 参与贡献
 Fork 本仓库
 新建 Feat_xxx 分支
