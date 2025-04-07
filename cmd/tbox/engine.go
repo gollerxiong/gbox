@@ -703,7 +703,7 @@ func (t *engine) createItemListFormaterFile(tab string, record []columnEntry) {
 	str.WriteString(fmt.Sprintf("\t\tb.mutex.Unlock() // 解锁\n"))
 	str.WriteString(fmt.Sprintf("\t} else {\n"))
 	str.WriteString(fmt.Sprintf("\t\tb.mutex.Lock() // 加锁\n"))
-	str.WriteString(fmt.Sprintf("\t\tb.Result = append(b.Result, result)\n"))
+	str.WriteString(fmt.Sprintf("\t\tb.Result = append(b.Result, arr)\n"))
 	str.WriteString(fmt.Sprintf("\t\tb.mutex.Unlock() // 解锁\n"))
 	str.WriteString(fmt.Sprintf("\t}\n"))
 	str.WriteString(fmt.Sprintf("}\n\n"))
