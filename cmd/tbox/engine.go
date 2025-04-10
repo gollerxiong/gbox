@@ -162,28 +162,28 @@ func (t *engine) getTableCode(tab string, record []columnEntry) []string {
 
 	// 这里可以改造，很多项目会提前链接db，直接从配置读取
 	tabInfoBuf.WriteString(fmt.Sprintf("func New%sModel() *%sModel {\n", t.camelCase(tab), t.camelCase(tab)))
-	tabInfoBuf.WriteString(fmt.Sprintf("// 这里的链接从连接池里面获取\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("dsn := \"root:123456@tcp(127.0.0.1:3306)/app_api?charset=utf8mb4&parseTime=True&loc=Local\"\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("if err != nil {\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("\tpanic(err)\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("\t// 这里的链接从连接池里面获取\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("\tdsn := \"root:123456@tcp(127.0.0.1:3306)/app_api?charset=utf8mb4&parseTime=True&loc=Local\"\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("\tdb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("\tif err != nil {\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("\t\tpanic(err)\n"))
 	tabInfoBuf.WriteString(fmt.Sprintf("}\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("ins := &%sModel{}\n", t.camelCase(tab)))
-	tabInfoBuf.WriteString(fmt.Sprintf("ins.SetConnect(db)\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("return ins\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("\tins := &%sModel{}\n", t.camelCase(tab)))
+	tabInfoBuf.WriteString(fmt.Sprintf("\tins.SetConnect(db)\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("\treturn ins\n"))
 	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
 	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) GetTableName() string {\n", t.camelCase(tab)))
 	tabInfoBuf.WriteString(fmt.Sprintf("\treturn \"%s\"\n", tab))
-	tabInfoBuf.WriteString(fmt.Sprintf("}\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
 	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) GetId() int64 {\n", t.camelCase(tab)))
 	tabInfoBuf.WriteString(fmt.Sprintf("\treturn t.ID\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("}\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
 	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) GetConnectName() string {\n", t.camelCase(tab)))
 	tabInfoBuf.WriteString(fmt.Sprintf("\treturn \"default\"\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("}\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
 	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) GetConnect() *gorm.DB {\n", t.camelCase(tab)))
 	tabInfoBuf.WriteString(fmt.Sprintf("\tif t.Connect == nil {\n"))
@@ -374,6 +374,7 @@ func (t *engine) ucFirst(str string) string {
 func (t *engine) createItemFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := t.ucFirst(tab) + ".go"
+	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
 	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
 
 	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
@@ -386,7 +387,10 @@ func (t *engine) createItemFile(tab string, record []columnEntry) {
 
 	fmt.Println(file_path)
 
-	os.WriteFile(file_path, []byte(str.String()), 0666)
+	err := os.WriteFile(file_path, []byte(str.String()), 0666)
+	if err != nil {
+		log.Println("gen code error: ", err)
+	}
 }
 
 func (t *engine) createItemStruct(tab string, b *strings.Builder) *strings.Builder {
@@ -443,15 +447,23 @@ func (t *engine) createColumnFormateStr(tab string, b *strings.Builder) *strings
 func (t *engine) createItemConstFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "Const")
+	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
 	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
 
 	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
-	os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	fmt.Println(file_path)
+	err := os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	if err != nil {
+		log.Println("gen code error: ", err)
+	}
 }
 
 func (t *engine) createItemHooksFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "Hooks")
+	os.MkdirAll(filepath.Join(t.libPath, t.ucFirst(tab)+"Dao"), 0777)
 	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
 
 	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
@@ -475,12 +487,18 @@ func (t *engine) createItemHooksFile(tab string, record []columnEntry) {
 	str.WriteString(fmt.Sprintf("\treturn ins\n"))
 	str.WriteString(fmt.Sprintf("}\n\n"))
 
-	os.WriteFile(file_path, []byte(str.String()), 0666)
+	fmt.Println(file_path)
+	err := os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	if err != nil {
+		log.Println("gen code error: ", err)
+	}
 }
 
 func (t *engine) createItemFormaterFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "Formatter")
+	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
 	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
 
 	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
@@ -500,12 +518,19 @@ func (t *engine) createItemFormaterFile(tab string, record []columnEntry) {
 	str.WriteString(fmt.Sprintf("\t// res.ColumnFuncMap[\"sex\"] = res.sexCallback\n\n"))
 	str.WriteString(fmt.Sprintf("\treturn res\n"))
 	str.WriteString(fmt.Sprintf("}\n\n\n"))
-	os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	fmt.Println(file_path)
+
+	err := os.WriteFile(file_path, []byte(str.String()), 0666)
+	if err != nil {
+		log.Println("gen code error: ", err)
+	}
 }
 
 func (t *engine) createItemListFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "List")
+	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
 	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
 
 	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", t.ucFirst(tab)+"Dao"))
@@ -570,7 +595,13 @@ func (t *engine) createItemListFile(tab string, record []columnEntry) {
 	str.WriteString(fmt.Sprintf("\tins.SetOrder(\"id desc\")\n\n"))
 	str.WriteString(fmt.Sprintf("\treturn ins\n"))
 	str.WriteString(fmt.Sprintf("}"))
-	os.WriteFile(file_path, []byte(str.String()), 0666)
+	fmt.Println(file_path)
+
+	err := os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	if err != nil {
+		log.Println("gen code error: ", err)
+	}
 }
 
 func (t *engine) createItemListgetFormatter(tab string, b *strings.Builder) *strings.Builder {
@@ -654,6 +685,7 @@ func (t *engine) createItemListObjectList(tab string, b *strings.Builder) *strin
 func (t *engine) createItemListFormaterFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "ListFormatter")
+	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
 	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
 
 	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", t.ucFirst(tab)+"Dao"))
@@ -717,7 +749,13 @@ func (t *engine) createItemListFormaterFile(tab string, record []columnEntry) {
 	str.WriteString(fmt.Sprintf("\t\tFormatter: New%sFormatter(),\n", t.camelCase(tab)))
 	str.WriteString(fmt.Sprintf("\t}\n"))
 	str.WriteString(fmt.Sprintf("}\n"))
-	os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	fmt.Println(file_path)
+	err := os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	if err != nil {
+		log.Println("gen code error: ", err)
+	}
 }
 
 func (t *engine) createItemListnewObjectListFormatterStr(tab string, b *strings.Builder) *strings.Builder {
@@ -794,6 +832,7 @@ func (t *engine) createItemListsetFields(tab string, b *strings.Builder) *string
 func (t *engine) createItemHelperFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "Helper")
+	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
 	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
 
 	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
@@ -801,12 +840,19 @@ func (t *engine) createItemHelperFile(tab string, record []columnEntry) {
 	str.WriteString(fmt.Sprintf("func New%sHelper() *%sHelper {\n", t.camelCase(tab), t.camelCase(tab)))
 	str.WriteString(fmt.Sprintf("\treturn &%sHelper{}\n", t.camelCase(tab)))
 	str.WriteString(fmt.Sprintf("}\n"))
-	os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	fmt.Println(file_path)
+	err := os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	if err != nil {
+		log.Println("gen code error: ", err)
+	}
 }
 
 func (t *engine) createItemBatchOperatorFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "BatchOperator")
+	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
 	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
 
 	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", t.ucFirst(tab)+"Dao"))
@@ -843,7 +889,13 @@ func (t *engine) createItemBatchOperatorFile(tab string, record []columnEntry) {
 	str.WriteString(fmt.Sprintf("\treturn ins\n"))
 	str.WriteString(fmt.Sprintf("}\n\n"))
 
-	os.WriteFile(file_path, []byte(str.String()), 0666)
+	fmt.Println(file_path)
+
+	err := os.WriteFile(file_path, []byte(str.String()), 0666)
+
+	if err != nil {
+		log.Println("gen code error: ", err)
+	}
 }
 
 func (t *engine) createLibrary(tab string, record []columnEntry) {
