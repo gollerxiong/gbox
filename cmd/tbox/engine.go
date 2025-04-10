@@ -191,11 +191,15 @@ func (t *engine) getTableCode(tab string, record []columnEntry) []string {
 	tabInfoBuf.WriteString(fmt.Sprintf("\t}\n\n"))
 	tabInfoBuf.WriteString(fmt.Sprintf("\t// 指定表名\n"))
 	tabInfoBuf.WriteString(fmt.Sprintf("\treturn t.Connect.Table(t.GetTableName()).Debug()\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("\t}\n\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
-	tabInfoBuf.WriteString(fmt.Sprintf("\tfunc (t *%sModel) SetConnect(connect *gorm.DB) {\n", t.camelCase(tab)))
-	tabInfoBuf.WriteString(fmt.Sprintf("\t\tt.Connect = connect\n"))
-	tabInfoBuf.WriteString(fmt.Sprintf("\t}\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) SetConnect(connect *gorm.DB) {\n", t.camelCase(tab)))
+	tabInfoBuf.WriteString(fmt.Sprintf("\tt.Connect = connect\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
+
+	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) GetPrimaryKey() string {\n", t.camelCase(tab)))
+	tabInfoBuf.WriteString(fmt.Sprintf("\treturn \"id\"\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
 	return []string{
 		header.String(), importBuf.String(), tabInfoBuf.String(),

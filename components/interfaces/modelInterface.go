@@ -7,4 +7,5 @@ type ModelInterface interface {
 	GetConnectName() string
 	GetConnect() *gorm.DB
 	GetId() int64
+	GetPrimaryKey() string
 }

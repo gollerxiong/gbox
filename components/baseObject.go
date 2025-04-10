@@ -79,7 +79,7 @@ func (b *BaseObject) Save() bool {
 			}
 		}()
 
-		result := tx.Model(b.GetModel().(interfaces.ModelInterface)).Where("id = ?", b.model.GetId()).Select(keys).Updates(diffMap)
+		result := tx.Model(b.GetModel().(interfaces.ModelInterface)).Where(b.model.GetPrimaryKey()+" = ?", b.model.GetId()).Select(keys).Updates(diffMap)
 		err := result.Error
 		if err != nil {
 			panic(err)
@@ -110,7 +110,7 @@ func (b *BaseObject) Delete() bool {
 
 func (b *BaseObject) LoadById(id int64) interface{} {
 	model := b.GetModel().(interfaces.ModelInterface)
-	err := model.GetConnect().Where("id = ?", id).First(model).Error
+	err := model.GetConnect().Where(b.model.GetPrimaryKey()+" = ?", id).First(model).Error
 
 	if err == gorm.ErrRecordNotFound {
 		b.SetNew(true)
