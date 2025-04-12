@@ -38,6 +38,26 @@ func StructToMap(s interface{}) map[string]interface{} {
 
 		if structValue.Field(i).Kind() == reflect.Struct {
 			result[fieldName] = StructToMap(structValue.Field(i).Interface())
+		} else if structValue.Field(i).Kind() == reflect.Slice || structValue.Field(i).Kind() == reflect.Array {
+			// 修复 1：直接处理当前字段值，而不是从 result 中取
+			fieldValue := structValue.Field(i)
+			tmpArr := make([]interface{}, 0, fieldValue.Len()) // 正确初始化切片
+
+			// 修复 2：遍历实际字段值
+			for j := 0; j < fieldValue.Len(); j++ {
+				elem := fieldValue.Index(j)
+				if elem.Kind() == reflect.Ptr {
+					elem = elem.Elem()
+				}
+
+				// 递归处理元素
+				if elem.Kind() == reflect.Struct || elem.Kind() == reflect.Slice || elem.Kind() == reflect.Array {
+					tmpArr = append(tmpArr, StructToMap(elem.Interface()))
+				} else {
+					tmpArr = append(tmpArr, elem.Interface())
+				}
+			}
+			result[fieldName] = tmpArr
 		} else {
 			result[fieldName] = structValue.Field(i).Interface()
 		}
