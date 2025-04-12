@@ -174,7 +174,7 @@ func (t *engine) getTableCode(tab string, record []columnEntry) []string {
 	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
 	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) GetTableName() string {\n", t.camelCase(tab)))
-	tabInfoBuf.WriteString(fmt.Sprintf("\treturn \"%s\"\n", tab))
+	tabInfoBuf.WriteString(fmt.Sprintf("\treturn t.TableName()\n"))
 	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
 	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) GetId() int64 {\n", t.camelCase(tab)))
@@ -199,6 +199,10 @@ func (t *engine) getTableCode(tab string, record []columnEntry) []string {
 
 	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) GetPrimaryKey() string {\n", t.camelCase(tab)))
 	tabInfoBuf.WriteString(fmt.Sprintf("\treturn \"id\"\n"))
+	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
+
+	tabInfoBuf.WriteString(fmt.Sprintf("func (t *%sModel) TableName() string {\n", t.camelCase(tab)))
+	tabInfoBuf.WriteString(fmt.Sprintf("\treturn \"%s\"\n", tab))
 	tabInfoBuf.WriteString(fmt.Sprintf("}\n\n"))
 
 	return []string{
