@@ -30,11 +30,55 @@ func (b *BaseObject) GetFormatter() interface{} {
 }
 
 func (b *BaseObject) GetAttributes() map[string]interface{} {
-	return b.attributes
+	// 筛选出需要的字段
+	result := make(map[string]interface{})
+
+	if !strings.Contains(b.field, "*") {
+		fieldArr := strings.Split(b.field, ",")
+
+		for _, key := range fieldArr {
+			val, ok := b.attributes[key]
+
+			if ok {
+				result[key] = val
+			}
+		}
+	} else {
+		result = b.attributes
+	}
+
+	// 对字段做格式化
+	b.formatter.SetData(result)
+
+	result = b.formatter.Formate()
+
+	return result
 }
 
 func (b *BaseObject) GetOldAttributes() map[string]interface{} {
-	return b.oldAttributes
+	// 筛选出需要的字段
+	result := make(map[string]interface{})
+
+	if !strings.Contains(b.field, "*") {
+		fieldArr := strings.Split(b.field, ",")
+
+		for _, key := range fieldArr {
+			val, ok := b.oldAttributes[key]
+
+			if ok {
+				result[key] = val
+			}
+		}
+	} else {
+		result = b.attributes
+	}
+
+	// 对字段做格式化
+	b.formatter.SetData(result)
+
+	result = b.formatter.Formate()
+
+	return result
 }
 
 func (b *BaseObject) GetHooks() interface{} {
