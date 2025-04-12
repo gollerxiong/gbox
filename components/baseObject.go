@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/gollerxiong/gbox/components/interfaces"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type BaseObject struct {
