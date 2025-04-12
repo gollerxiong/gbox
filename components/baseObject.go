@@ -70,7 +70,7 @@ func (b *BaseObject) GetOldAttributes() map[string]interface{} {
 			}
 		}
 	} else {
-		result = b.attributes
+		result = b.oldAttributes
 	}
 
 	// 对字段做格式化
