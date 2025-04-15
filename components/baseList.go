@@ -19,6 +19,10 @@ type BaseList struct {
 	Formatter *interfaces.ListFormatterInterface
 }
 
+func (b *BaseList) GetFormatter() interface{} {
+	return b.Formatter
+}
+
 func (b *BaseList) SetField(field string) *BaseList {
 	b.Field = field
 	return b
