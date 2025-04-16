@@ -62,6 +62,9 @@ func (b *BaseList) BuildParams() {
 		b.Connect = b.Connect.Where("id IN (?)", b.Ids)
 	}
 
-	offset := (b.Page - 1) * b.PageSize
-	b.Connect = b.Connect.Offset(int(offset)).Limit(int(b.PageSize))
+	// 如果需要分页
+	if b.PageNate {
+		offset := (b.Page - 1) * b.PageSize
+		b.Connect = b.Connect.Offset(int(offset)).Limit(int(b.PageSize))
+	}
 }
