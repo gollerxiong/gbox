@@ -98,11 +98,12 @@ func (t *engine) getTableCode(tab string, record []columnEntry) []string {
 	tabInfoBuf.WriteString(fmt.Sprintf("type %s struct {\n", structName+"Model"))
 	for _, val := range record {
 		dataType := getType(val.DataType) // column type
-		if dataType == "time.Time" && importBuf.Len() == 0 {
+		if (dataType == "time.Time" || dataType == "orb.Geometry") && importBuf.Len() == 0 {
 			importBuf.WriteString("import (\n\t\"time\"\n")
 			importBuf.WriteString("\t\"gorm.io/driver/mysql\"\n")
 			importBuf.WriteString("\t\"gorm.io/gorm/logger\"\n")
 			importBuf.WriteString("\t\"gorm.io/gorm\"\n")
+			importBuf.WriteString("\t\"github.com/paulmach/orb\"\n")
 			importBuf.WriteString(")\n\n")
 		}
 
