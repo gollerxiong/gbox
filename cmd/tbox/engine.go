@@ -3,12 +3,11 @@ package tbox
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 // engine table to struct data define.
@@ -96,15 +95,23 @@ func (t *engine) getTableCode(tab string, record []columnEntry) []string {
 	tabInfoBuf.WriteString(fmt.Sprintf("const %s = \"%s\"\n\n", tabName, tab))
 	tabInfoBuf.WriteString(fmt.Sprintf("// %s for %s table entity struct.\n", structName, tab))
 	tabInfoBuf.WriteString(fmt.Sprintf("type %s struct {\n", structName+"Model"))
+
+	importBuf.WriteString("import (\n")
+	importBuf.WriteString("\t\"gorm.io/driver/mysql\"\n")
+	importBuf.WriteString("\t\"gorm.io/gorm/logger\"\n")
+	importBuf.WriteString("\t\"gorm.io/gorm\"\n")
 	for _, val := range record {
 		dataType := getType(val.DataType) // column type
-		if (dataType == "time.Time" || dataType == "orb.Geometry") && importBuf.Len() == 0 {
-			importBuf.WriteString("import (\n\t\"time\"\n")
-			importBuf.WriteString("\t\"gorm.io/driver/mysql\"\n")
-			importBuf.WriteString("\t\"gorm.io/gorm/logger\"\n")
-			importBuf.WriteString("\t\"gorm.io/gorm\"\n")
+		if dataType == "time.Time" && !strings.Contains(importBuf.String(), "time") {
+			importBuf.WriteString("\t\"time\"\n")
+		}
+
+		if dataType == "orb.Geometry" && !strings.Contains(importBuf.String(), "github.com/paulmach/orb") {
 			importBuf.WriteString("\t\"github.com/paulmach/orb\"\n")
-			importBuf.WriteString(")\n\n")
+		}
+
+		if dataType == "datatypes.JSON" && !strings.Contains(importBuf.String(), "gorm.io/datatypes") {
+			importBuf.WriteString("\t\"gorm.io/datatypes\"\n")
 		}
 
 		if t.noNullField && strInSet(dataType, noNullList) {
@@ -151,6 +158,7 @@ func (t *engine) getTableCode(tab string, record []columnEntry) []string {
 		tabInfoBuf.WriteString("\n")
 	}
 
+	importBuf.WriteString(")\n\n")
 	tabInfoBuf.WriteString("\tConnect          *gorm.DB            `json:\"-\" gorm:\"-\"`\n")
 	tabInfoBuf.WriteString("}\n")
 

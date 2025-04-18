@@ -42,6 +42,7 @@ var typeForMysqlToGo = map[string]string{
 	"binary":             "string",
 	"varbinary":          "string",
 	"geometry":           "orb.Geometry",
+	"json":               "datatypes.JSON",
 }
 
 func getType(mysqlType string) string {
