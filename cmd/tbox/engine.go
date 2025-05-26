@@ -233,7 +233,7 @@ func (t *engine) Run(table ...string) error {
 		}
 
 		if !checkPathExist(t.libPath) {
-			dir_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao")
+			dir_path := filepath.Join(t.libPath)
 			fmt.Println(dir_path)
 			//os.Mkdir(dir_path, os.ModePerm)
 
@@ -387,10 +387,10 @@ func (t *engine) ucFirst(str string) string {
 func (t *engine) createItemFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := t.ucFirst(tab) + ".go"
-	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
-	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
+	os.MkdirAll(fmt.Sprintf("%s", t.libPath), 0777)
+	file_path := filepath.Join(t.libPath, file_name)
 
-	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
+	str.WriteString(fmt.Sprintf("package %s\n\n", "Dao"))
 	str.WriteString(fmt.Sprintf("import (\n"))
 	str.WriteString(fmt.Sprintf("\t\"github.com/gollerxiong/gbox/components\"\n"))
 	str.WriteString(fmt.Sprintf("\t\"%s%s\"\n", t.packageName, strings.Trim(t.pkgPath, ".")))
@@ -460,10 +460,10 @@ func (t *engine) createColumnFormateStr(tab string, b *strings.Builder) *strings
 func (t *engine) createItemConstFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "Const")
-	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
-	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
+	os.MkdirAll(fmt.Sprintf("%s", t.libPath), 0777)
+	file_path := filepath.Join(t.libPath, file_name)
 
-	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
+	str.WriteString(fmt.Sprintf("package %s\n\n", "Dao"))
 
 	fmt.Println(file_path)
 	err := os.WriteFile(file_path, []byte(str.String()), 0666)
@@ -476,10 +476,10 @@ func (t *engine) createItemConstFile(tab string, record []columnEntry) {
 func (t *engine) createItemHooksFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "Hooks")
-	os.MkdirAll(filepath.Join(t.libPath, t.ucFirst(tab)+"Dao"), 0777)
-	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
+	os.MkdirAll(filepath.Join(t.libPath), 0777)
+	file_path := filepath.Join(t.libPath, file_name)
 
-	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
+	str.WriteString(fmt.Sprintf("package %s\n\n", "Dao"))
 	str.WriteString(fmt.Sprintf("import (\n"))
 	str.WriteString(fmt.Sprintf("\t\"github.com/gollerxiong/gbox/components\"\n"))
 	str.WriteString(fmt.Sprintf("\t\"%s\"\n", t.packageName+strings.Trim(t.pkgPath, ".")))
@@ -511,10 +511,10 @@ func (t *engine) createItemHooksFile(tab string, record []columnEntry) {
 func (t *engine) createItemFormaterFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "Formatter")
-	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
-	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
+	os.MkdirAll(fmt.Sprintf("%s", t.libPath), 0777)
+	file_path := filepath.Join(t.libPath, file_name)
 
-	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
+	str.WriteString(fmt.Sprintf("package %s\n\n", "Dao"))
 	str.WriteString(fmt.Sprintf("import (\n"))
 	str.WriteString(fmt.Sprintf("\t\"github.com/gollerxiong/gbox/components\"\n)\n\n"))
 	str.WriteString(fmt.Sprintf("type %sFormatter struct {\n", t.camelCase(tab)))
@@ -543,10 +543,10 @@ func (t *engine) createItemFormaterFile(tab string, record []columnEntry) {
 func (t *engine) createItemListFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "List")
-	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
-	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
+	os.MkdirAll(fmt.Sprintf("%s", t.libPath), 0777)
+	file_path := filepath.Join(t.libPath, file_name)
 
-	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", t.ucFirst(tab)+"Dao"))
+	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", "Dao"))
 	str.WriteString(fmt.Sprintf("\t\"github.com/gollerxiong/gbox/components\"\n"))
 	str.WriteString(fmt.Sprintf("\t\"%s\"\n", t.packageName+strings.Trim(t.pkgPath, ".")))
 	str.WriteString(fmt.Sprintf("\t\"strings\"\n"))
@@ -701,10 +701,10 @@ func (t *engine) createItemListObjectList(tab string, b *strings.Builder) *strin
 func (t *engine) createItemListFormaterFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "ListFormatter")
-	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
-	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
+	os.MkdirAll(fmt.Sprintf("%s", t.libPath), 0777)
+	file_path := filepath.Join(t.libPath, file_name)
 
-	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", t.ucFirst(tab)+"Dao"))
+	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", "Dao"))
 	str.WriteString(fmt.Sprintf("\t\"github.com/gollerxiong/gbox/components\"\n"))
 	str.WriteString(fmt.Sprintf("\t\"%s\"\n", t.packageName+strings.Trim(t.pkgPath, ".")))
 	str.WriteString(fmt.Sprintf("\t\"strings\"\n"))
@@ -848,10 +848,10 @@ func (t *engine) createItemListsetFields(tab string, b *strings.Builder) *string
 func (t *engine) createItemHelperFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "Helper")
-	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
-	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
+	os.MkdirAll(fmt.Sprintf("%s", t.libPath), 0777)
+	file_path := filepath.Join(t.libPath, file_name)
 
-	str.WriteString(fmt.Sprintf("package %s\n\n", t.ucFirst(tab)+"Dao"))
+	str.WriteString(fmt.Sprintf("package %s\n\n", "Dao"))
 	str.WriteString(fmt.Sprintf("type %sHelper struct {}\n\n", t.camelCase(tab)))
 	str.WriteString(fmt.Sprintf("func New%sHelper() *%sHelper {\n", t.camelCase(tab), t.camelCase(tab)))
 	str.WriteString(fmt.Sprintf("\treturn &%sHelper{}\n", t.camelCase(tab)))
@@ -868,10 +868,10 @@ func (t *engine) createItemHelperFile(tab string, record []columnEntry) {
 func (t *engine) createItemBatchOperatorFile(tab string, record []columnEntry) {
 	str := strings.Builder{}
 	file_name := fmt.Sprintf("%s%s.go", t.ucFirst(tab), "BatchOperator")
-	os.MkdirAll(fmt.Sprintf("%s/%s", t.libPath, t.ucFirst(tab)+"Dao"), 0777)
-	file_path := filepath.Join(t.libPath, t.ucFirst(tab)+"Dao", file_name)
+	os.MkdirAll(fmt.Sprintf("%s", t.libPath), 0777)
+	file_path := filepath.Join(t.libPath, file_name)
 
-	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", t.ucFirst(tab)+"Dao"))
+	str.WriteString(fmt.Sprintf("package %s\n\nimport (\n", "Dao"))
 	str.WriteString(fmt.Sprintf("\t\"%s/components\"\n", "github.com/gollerxiong/gbox"))
 	str.WriteString(fmt.Sprintf("\t\"%s\"\n", t.packageName+strings.Trim(t.pkgPath, ".")))
 	str.WriteString(fmt.Sprintf(")\n\n"))
